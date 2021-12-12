@@ -1,0 +1,27 @@
+.card{
+  background-color: #f4f4f4;
+  padding-left: 15%;
+  padding-right: 15%;
+   padding-top: 5%;
+    padding-bottom: 5%;
+}
+
+button{
+  display: flex;
+  align-content: center;
+  flex-direction: row;
+}
+
+select{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.ng-invalid:not(form) {
+  border: 1px solid #a94442;
+}
+
+.ng-untouched:not(form) {
+  border: 1px solid grey;
+
+}

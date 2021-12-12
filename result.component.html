@@ -1,0 +1,380 @@
+<!-- <p>result works!</p> -->
+
+
+<body>
+
+  <div class="navbar" style="padding-bottom:60px; padding-top:30px;">
+    <ul class="nav nav-pills d-flex justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link {{showRes ? 'active':''}}" (click)="showResFunc()"
+          [routerLink]="[ '/search/results' ]">Results</a>
+      </li>
+      <li class="nav-item" style="padding-left:20px">
+        <a class="nav-link {{(showFav||nodata) ? 'active':''}}" (click)="showFavFunc()"
+          [routerLink]="[ '/search/favorites' ]">Favorites</a>
+      </li>
+    </ul>
+  </div>
+
+
+  <ng-container *ngIf="showRes">
+    <div style="text-align: center; margin-bottom:20px;">
+      <h3>Forecast at {{forcastAt}}</h3>
+    </div>
+    <div class="star" style="margin-bottom: 15px">
+
+      <ng-container *ngIf="yellow">
+        <button class="btn btn-outline-secondary btn-sm" (click)="addToFav()">
+          <span id="favstar" class="material-icons" style="color: rgb(248, 213, 86);">
+            star
+          </span>
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="!yellow">
+        <button class="btn btn-outline-secondary btn-sm" (click)="addToFav()">
+          <span id="favstar" class="material-icons">
+            star_outline
+          </span>
+        </button>
+      </ng-container>
+
+
+      <span style="margin-left:5px;  color:gray;">
+        Details
+      </span>
+      <span class="material-icons">
+        arrow_forward_ios
+      </span>
+    </div>
+    <ng-container *ngIf="showThree">
+      <nav>
+        <div class="nav nav-tabs d-flex justify-content-end" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#dayview"
+            (click)="showDayviewFunc()" role="tab" aria-controls="nav-home" aria-selected="true" id="dayviewLink">Day
+            View</a>
+          <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#DailyTemp"
+            (click)="showChartFunc()" role="tab" aria-controls="nav-profile" aria-selected="false"
+            id="DailyTempLink">Daily Temp. Chart</a>
+          <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#Meteogram"
+            (click)="showMeteogramFunc()" role="tab" aria-controls="nav-contact" aria-selected="false"
+            id="MeteogramLink">Meteogram</a>
+        </div>
+      </nav>
+
+      <ng-container id="dayview" *ngIf="showDayView && backfromde">
+
+        <table class="table table-hover" [@resenter]>
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">Temp. High (° F) </th>
+              <th scope="col">Temp. Low (° F)</th>
+              <th scope="col">Wind Speed (mph) </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cur of tomorrowInfo.data.timelines[1].intervals; index as i">
+              <th scope="row">{{ i + 1 }}</th>
+
+              <td>
+                <span placement="top" (click)="showDetail(cur)"
+                  style="cursor:pointer; text-decoration: underline; color: #007afe;">
+                  {{ cur.formatstartTime }}
+                </span>
+              </td>
+              <td>
+                <span>
+                  <img style="width: 25px; height: 25px;" src={{cur.values.url}} alt="logo">
+                  {{cur.values.status}}
+                </span>
+              </td>
+              <td>{{ cur.values.temperatureMax }}</td>
+              <td>{{ cur.values.temperatureMin }}</td>
+              <td>{{ cur.values.windSpeed }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+
+      <ng-container id="dayview" *ngIf="showDayView && !backfromde">
+
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Date</th>
+              <th scope="col">Status</th>
+              <th scope="col">Temp. High (° F) </th>
+              <th scope="col">Temp. Low (° F)</th>
+              <th scope="col">Wind Speed (mph) </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cur of tomorrowInfo.data.timelines[1].intervals; index as i">
+              <th scope="row">{{ i + 1 }}</th>
+
+              <td>
+                <span placement="top" (click)="showDetail(cur)"
+                  style="cursor:pointer; text-decoration: underline; color: #007afe;">
+                  {{ cur.formatstartTime }}
+                </span>
+              </td>
+              <td>
+                <span>
+                  <img style="width: 25px; height: 25px;" src={{cur.values.url}} alt="logo">
+                  {{cur.values.status}}
+                </span>
+              </td>
+              <td>{{ cur.values.temperatureMax }}</td>
+              <td>{{ cur.values.temperatureMin }}</td>
+              <td>{{ cur.values.windSpeed }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+
+      <div [style.display]="showChart? 'inline':'none'" id="DailyTemp">
+        <figure class="highcharts-figure">
+          <div id="container1">
+            <div id="loading1">
+              <i class="fa fa-spinner fa-spin"></i> Loading data from external source
+            </div>
+          </div>
+        </figure>
+      </div>
+      <div [style.display]="showMeteogram? 'inline':'none'" id="Meteogram">
+        <figure class="highcharts-figure">
+          <div id="container2">
+            <div id="loading2">
+              <i class="fa fa-spinner fa-spin"></i> Loading data from external source
+            </div>
+          </div>
+        </figure>
+      </div>
+    </ng-container>
+
+
+    <!-- <div id="container">
+
+  </div> -->
+    <!-- <div *ngIf="showDe">
+      <div>
+        <div>
+          <button (click)="backRes()">List</button>
+        </div>
+
+        <a [href]="tweetUrl" target="_blank" type="button">
+          tweet
+        </a>
+
+        <div>{{curdetail.formatstartTime}}</div>
+        <table>
+          <tbody>
+            <tr>
+              <td>Status</td>
+              <td>{{ curdetail.values.status }}</td>
+            </tr>
+            <tr>
+              <td>Max Temperature</td>
+              <td>{{ curdetail.values.temperatureMax }} °F</td>
+            </tr>
+            <tr>
+              <td>Min Temperature</td>
+              <td>{{ curdetail.values.temperatureMin }} °F</td>
+            </tr>
+            <tr>
+              <td>Apparent Temperature</td>
+              <td>{{ curdetail.values.temperatureApparent }} °F</td>
+            </tr>
+            <tr>
+              <td>Sun Rise Time</td>
+              <td>{{ curdetail.values.sunriseTime | date: 'hh:mm:ss' }}</td>
+            </tr>
+            <tr>
+              <td>Sun Set Time</td>
+              <td>{{ curdetail.values.sunsetTime | date: 'hh:mm:ss' }}</td>
+            </tr>
+            <tr>
+              <td>Humidity</td>
+              <td>{{ curdetail.values.humidity }} %</td>
+            </tr>
+            <tr>
+              <td>Wind Speed</td>
+              <td>{{ curdetail.values.windSpeed }} mph</td>
+            </tr>
+            <tr>
+              <td>Visibility</td>
+              <td>{{ curdetail.values.visibility }} %</td>
+            </tr>
+            <tr>
+              <td>Cloud Cover</td>
+              <td>{{ curdetail.values.cloudCover }} %</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="googlemap">
+        <p>map</p>
+      </div>
+    </div> -->
+  </ng-container>
+
+
+  <div *ngIf="showDe" [@deenter]>
+    <div>
+      <div class="detail-head">
+        <div>
+          <button class="btn btn-outline-secondary btn-sm" (click)="backRes()">
+            <span class="material-icons">
+              arrow_back_ios
+            </span>
+            <span style="font-size: 18px;">List</span>
+          </button>
+        </div>
+        <h3>{{curdetail.formatstartTime}}</h3>
+        <a [href]="tweetUrl" target="_blank" type="button">
+          <img
+            src="https://cdn.cms-twdigitalassets.com/content/dam/about-twitter/en/brand-toolkit/brand-download-img-1.jpg.twimg.2560.jpg"
+            style="width: 40px; height: 40px;" alt="tw">
+        </a>
+      </div>
+
+      <table class="table table-striped" style="margin-top: 20px;">
+        <tbody>
+          <tr>
+            <td style="font-weight: bold;">Status</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.status }}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Max Temperature</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.temperatureMax }} °F</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Min Temperature</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.temperatureMin }} °F</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Apparent Temperature</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.temperatureApparent }} °F</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Sun Rise Time</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.sunriseTime | date: 'HH:mm:ss' }}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Sun Set Time</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.sunsetTime | date: 'HH:mm:ss' }}</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Humidity</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.humidity }} %</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Wind Speed</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.windSpeed }} mph</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Visibility</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.visibility }} mi</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold;">Cloud Cover</td>
+            <td style="padding-right: 150px;">{{ curdetail.values.cloudCover }} %</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- <table>
+        <tbody>
+          <tr>
+            <td>Status</td>
+            <td>{{ curdetail.values.status }}</td>
+          </tr>
+          <tr>
+            <td>Max Temperature</td>
+            <td>{{ curdetail.values.temperatureMax }} °F</td>
+          </tr>
+          <tr>
+            <td>Min Temperature</td>
+            <td>{{ curdetail.values.temperatureMin }} °F</td>
+          </tr>
+          <tr>
+            <td>Apparent Temperature</td>
+            <td>{{ curdetail.values.temperatureApparent }} °F</td>
+          </tr>
+          <tr>
+            <td>Sun Rise Time</td>
+            <td>{{ curdetail.values.sunriseTime | date: 'hh:mm:ss' }}</td>
+          </tr>
+          <tr>
+            <td>Sun Set Time</td>
+            <td>{{ curdetail.values.sunsetTime | date: 'hh:mm:ss' }}</td>
+          </tr>
+          <tr>
+            <td>Humidity</td>
+            <td>{{ curdetail.values.humidity }} %</td>
+          </tr>
+          <tr>
+            <td>Wind Speed</td>
+            <td>{{ curdetail.values.windSpeed }} mph</td>
+          </tr>
+          <tr>
+            <td>Visibility</td>
+            <td>{{ curdetail.values.visibility }} %</td>
+          </tr>
+          <tr>
+            <td>Cloud Cover</td>
+            <td>{{ curdetail.values.cloudCover }} %</td>
+          </tr>
+        </tbody>
+      </table> -->
+    </div>
+  </div>
+  <div id="googlemap" [style.display]="showDe? 'block':'none'" style="width:100%;height:400px">
+    {{showDe}}
+  </div>
+
+  <ng-container *ngIf="showFav">
+    <div class="container">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">City</th>
+            <th scope="col">State</th>
+            <th scope="col"> </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cur of favList; index as i">
+            <th scope="row">{{ i + 1 }}</th>
+            <td (click)="directFav(cur)" style="cursor:pointer; text-decoration: underline; color: #007afe;">{{ cur.city
+              }}</td>
+            <td (click)="directFav(cur)" style="cursor:pointer; text-decoration: underline; color: #007afe;">{{
+              cur.state }}</td>
+            <td>
+              <button type="button" class="btn btn-sm" (click)="deleteFav(cur)">
+                <span class="material-icons">
+                  delete
+                </span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="nodata">
+    <div class="container">
+      <p>
+        <ngb-alert [dismissible]="false">
+          <strong>Sorry!</strong> No records found
+        </ngb-alert>
+      </p>
+    </div>
+  </ng-container>
+
+</body>

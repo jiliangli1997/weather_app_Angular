@@ -1,0 +1,30 @@
+#googlemap {
+  height: 500px;
+  width: 500px;
+}
+
+.navbar{
+  display: flex;
+  flex-direction: row;
+  align-items: center; justify-content:center;
+}
+
+.star{
+  display: flex;
+  flex-direction: row;
+   align-items: center; justify-content:flex-end;
+}
+
+.detail-head{
+  display: flex;
+  flex-direction: row;
+  justify-content:space-between;
+  align-items: center;
+}
+
+button{
+  display: flex;
+  align-content: center;
+  flex-direction: row;
+}
+
